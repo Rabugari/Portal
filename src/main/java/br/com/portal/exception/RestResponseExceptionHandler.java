@@ -11,6 +11,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+/**
+ * Handle para exceptions
+ * @author douglas.takara
+ */
 @ControllerAdvice
 @RestControllerAdvice
 public class RestResponseExceptionHandler extends ResponseEntityExceptionHandler {
@@ -19,5 +23,4 @@ public class RestResponseExceptionHandler extends ResponseEntityExceptionHandler
 	public ResponseEntity<Object> handleAccessDeniedException(Exception e, WebRequest request){
 		return new ResponseEntity<Object>("message", new HttpHeaders(), HttpStatus.FORBIDDEN);
 	}
-
 }

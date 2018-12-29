@@ -9,62 +9,66 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.validation.constraints.NotNull;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Dominio para o usu·rio da aplicaÁ„o
+ * Dominio para o usu√°rio da aplica√ß√£o
  * @author douglas.takara
  */
 @Entity
+@Table(name = "USER")
 public class User implements Serializable, UserDetails {
 
 	private static final long serialVersionUID = -9221635979870150799L;
-	
+
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
+	@SequenceGenerator(name = "user_seq", sequenceName = "user_seq", allocationSize = 1)
 	private Long id;
-	
-	@Column
+
+	@Column(name = "NAME", length = 50)
 	private String name;
-	
-	@Column
+
+	@Column(name = "EMAIL", length = 120)
 	private String email;
-	
-	@Column
+
+	@Column(name = "PASSWORD", length = 120)
 	private String password;
-	
-	@OneToMany(cascade=CascadeType.ALL)
+
+	@OneToMany(cascade = CascadeType.ALL)
 	private List<Phone> phones;
-	
-	@Column
-	@JsonFormat(pattern="dd/MM/yyyy HH:mm")
+
+	@Column(name = "CREATED")
+	@JsonFormat(pattern = "dd/MM/yyyy HH:mm")
 	private LocalDateTime created;
-	
-	@Column
-	@JsonFormat(pattern="dd/MM/yyyy HH:mm")
+
+	@Column(name = "MODIFIED")
+	@JsonFormat(pattern = "dd/MM/yyyy HH:mm")
 	private LocalDateTime modified;
-	
-	@Column
-	@JsonFormat(pattern="dd/MM/yyyy HH:mm")
+
+	@Column(name = "LASTLOGIN")
+	@JsonFormat(pattern = "dd/MM/yyyy HH:mm")
+	@JsonProperty(value="last_login")
 	private LocalDateTime lastLogin;
-	
-	@Column
+
+	@Column(name = "TOKEN")
 	private String token;
-	
-	public User(String name, String email, String password, List<Phone> phones) {
-		super();
-		this.name = name;
-		this.email = email;
-		this.password = password;
-		this.phones = phones;
-	}
+
+	@Transient
+    @JsonIgnore
+    private Collection<? extends GrantedAuthority> authorities;
 
 	public Long getId() {
 		return id;
@@ -138,39 +142,39 @@ public class User implements Serializable, UserDetails {
 		this.token = token;
 	}
 
+	@JsonIgnore
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		// TODO Auto-generated method stub
-		return null;
+		return authorities;
 	}
 
+	@JsonIgnore
 	@Override
 	public String getUsername() {
-		// TODO Auto-generated method stub
-		return null;
+		return getEmail();
 	}
 
+	@JsonIgnore
 	@Override
 	public boolean isAccountNonExpired() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
+	@JsonIgnore
 	@Override
 	public boolean isAccountNonLocked() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
+	@JsonIgnore
 	@Override
 	public boolean isCredentialsNonExpired() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
+	@JsonIgnore
 	@Override
 	public boolean isEnabled() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 }

@@ -5,25 +5,30 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 /**
- * DomÌnio para telefone do usu·rio
+ * Dom√≠nio para telefone do usu√°rio
  * @author douglas.takara
  */
 @Entity
+@Table(name="PHONE")
 public class Phone implements Serializable {
 
 	private static final long serialVersionUID = -6753234351933827560L;
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="phone_seq")
+	@SequenceGenerator(name="phone_seq", sequenceName="phone_seq", allocationSize=1	)
 	private Long id;
 	
-	@Column
+	@Column(name="DDD", length=2)
 	private Integer ddd;
 	
-	@Column
+	@Column(name="NUMBER", length=20)
 	private Long number;
 	
 	public Integer getDdd() {

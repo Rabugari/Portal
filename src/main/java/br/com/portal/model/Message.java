@@ -3,7 +3,7 @@ package br.com.portal.model;
 import java.io.Serializable;
 
 /**
- * Dominio para mensagens da aplicação
+ * Dominio para mensagens da aplicaÃ§Ã£o
  * @author douglas.takara
  */
 public class Message implements Serializable {

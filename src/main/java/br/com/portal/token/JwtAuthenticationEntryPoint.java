@@ -1,21 +1,29 @@
-package br.com.portal.config;
+package br.com.portal.token;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.stereotype.Component;
 
-public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint{
+/**
+ * Entrypoint para validar acesso sem token
+ * @author douglas.takara
+ */
+@Component
+public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Serializable {
+
+	private static final long serialVersionUID = 648337202907888819L;
 
 	@Override
 	public void commence(HttpServletRequest request, HttpServletResponse response,
 			AuthenticationException authException) throws IOException, ServletException {
-		//em caso do usu·rio tentar acessar o serviÁo sem nenhuma credencial
+		//em caso do usu√°rio tentar acessar o servi√ßo sem nenhuma credencial
 		response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
 	}
 }

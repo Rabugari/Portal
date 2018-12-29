@@ -7,11 +7,14 @@ import org.springframework.stereotype.Repository;
 
 import br.com.portal.model.User;
 
+/**
+ * Repositório para o usuário
+ * {@link User}
+ * @author douglas.takara
+ */
 @Repository
 public interface UserRepository extends JpaRepository<User, String>{
-
 	Optional<User> findByEmail(String email);
 	
 	Optional<User> findByToken(String token);
-	
 }
