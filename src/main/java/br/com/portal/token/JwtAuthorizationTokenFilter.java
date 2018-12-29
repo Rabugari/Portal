@@ -1,5 +1,7 @@
 package br.com.portal.token;
 
+import java.io.PrintWriter;
+
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -7,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,9 +17,13 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import br.com.portal.errors.exceptions.AuthenticationException;
+import com.google.gson.Gson;
+
+import br.com.portal.model.ErrorMessage;
 import br.com.portal.model.User;
 import br.com.portal.service.JwtUserDetailsService;
+import br.com.portal.util.MessageUtil;
+import br.com.portal.util.MessageUtil.MessageConstants;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.io.IOException;
@@ -28,8 +35,13 @@ import io.jsonwebtoken.io.IOException;
 @Component
 public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
 
+	private static final String APPLICATION_JSON = "application/json";
+
 	private static final String BEARER = "Bearer ";
 
+	@Autowired
+	private MessageUtil messageUtil;
+	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	private final JwtUserDetailsService userDetailsService;
@@ -58,12 +70,13 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
 				username = jwtTokenUtil.getUsernameFromToken(authToken);
 			} catch (IllegalArgumentException e) {
 				logger.error("Erro ao validar o usuário", e);
+				writeResponseMessage(messageUtil.getMessage(MessageConstants.USER_ERROR), response);
 			} catch (ExpiredJwtException e) {
 				logger.warn("Token expirado.", e);
-			} catch(MalformedJwtException e) {
+				writeResponseMessage(messageUtil.getMessage(MessageConstants.SESSION_INVALID), response);
+			} catch(MalformedJwtException | io.jsonwebtoken.SignatureException e) {
 				logger.warn("Token inválido", e);
-				throw new AuthenticationException("user.not_authorized", e);
-//				response.getSendError(HttpStatus.UNAUTHORIZED.value(), "{user.not_authorized}");
+				writeResponseMessage(messageUtil.getMessage(MessageConstants.USER_NOT_AUTHORIZED), response);
 			}
 		} else {
 			 logger.warn("Acesso endpoint de exceção ou Tipo de 'Authorization' inválida.");
@@ -83,5 +96,13 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
 			}
 		}
 		chain.doFilter(request, response);
+	}
+	
+	
+	private void writeResponseMessage(String messageError, HttpServletResponse response) throws java.io.IOException {
+		response.setContentType(APPLICATION_JSON);
+		PrintWriter writer = response.getWriter();
+		String json = new Gson().toJson(new ErrorMessage(messageError));
+        writer.println(json);
 	}
 }

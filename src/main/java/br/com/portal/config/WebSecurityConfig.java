@@ -20,6 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import br.com.portal.service.JwtUserDetailsService;
 import br.com.portal.token.JwtAuthenticationEntryPoint;
 import br.com.portal.token.JwtAuthorizationTokenFilter;
+import br.com.portal.util.ApplicationProperties;
 
 /**
  * Configuração para acesso das apis
@@ -39,10 +40,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private JwtUserDetailsService jwtUserDetailsService;
 	
-	@Value("${jwt.header}")
+	@Value(ApplicationProperties.JWT_HEADER)
 	private String tokenHeader;
 	
-	@Value("${jwt.route.authentication.path}")
+	@Value(ApplicationProperties.JWT_AUTHENTICATION_PATH)
 	private String authenticationPath;
 	
 	@Autowired
@@ -68,7 +69,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 			.authorizeRequests()
-//			.antMatchers("/login/**").permitAll()
 			.antMatchers(HttpMethod.POST, "/user").permitAll()
 			.anyRequest().authenticated();
 		

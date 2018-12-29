@@ -1,5 +1,6 @@
 package br.com.portal.controller;
 
+import org.apache.tomcat.websocket.AuthenticationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,8 +41,9 @@ public class UserProfileController {
 	}
 
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<User> getAuthenticatedUser(@PathVariable("id") String id) throws UsernameNotFoundException {
-		User user = (User) userDetailsService.getById(id);
+	public ResponseEntity<User> getAuthenticatedUser(@PathVariable("id") String id,
+			@RequestHeader(value = "Authorization") String token) throws UsernameNotFoundException, AuthenticationException {
+		User user = (User) userDetailsService.getById(id, token);
 		return ResponseEntity.ok(user);
 	}
 }

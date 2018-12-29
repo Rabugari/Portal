@@ -1,8 +1,6 @@
 package br.com.portal.token;
 
 import java.io.Serializable;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import br.com.portal.model.User;
+import br.com.portal.util.ApplicationProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Clock;
 import io.jsonwebtoken.Jwts;
@@ -32,10 +31,10 @@ public class JwtTokenUtil implements Serializable {
 
 	private Clock clock = DefaultClock.INSTANCE;
 
-	@Value("${jwt.secret}")
+	@Value(ApplicationProperties.JWT_SECRET)
 	private String secret;
 
-	@Value("${jwt.expiration}")
+	@Value(ApplicationProperties.JWT_EXPIRATION)
 	private Long expiration;
 
 	public String getUsernameFromToken(String token) {
@@ -64,14 +63,6 @@ public class JwtTokenUtil implements Serializable {
 		return expiration.before(clock.now());
 	}
 
-	private Boolean isCreatedBeforeLastPasswordReset(Date created, Date lastPasswordReset) {
-		return (lastPasswordReset != null && created.before(lastPasswordReset));
-	}
-
-	private Boolean ignoreTokenExpiration(String token) {
-		return false;
-	}
-
 	public String generateToken(User userDetails) {
 		Map<String, Object> claims = new HashMap<>();
 		return doGenerateToken(claims, userDetails.getEmail());
@@ -85,42 +76,20 @@ public class JwtTokenUtil implements Serializable {
 				.setExpiration(expirationDate).signWith(SignatureAlgorithm.HS512, secret).compact();
 	}
 
-	public Boolean canTokenBeRefreshed(String token, Date lastPasswordReset) {
-		final Date created = getIssuedAtDateFromToken(token);
-		return !isCreatedBeforeLastPasswordReset(created, lastPasswordReset)
-				&& (!isTokenExpired(token) || ignoreTokenExpiration(token));
-	}
-
-	public String refreshToken(String token) {
-		final Date createdDate = clock.now();
-		final Date expirationDate = calculateExpirationDate(createdDate);
-
-		final Claims claims = getAllClaimsFromToken(token);
-		claims.setIssuedAt(createdDate);
-		claims.setExpiration(expirationDate);
-
-		return Jwts.builder().setClaims(claims).signWith(SignatureAlgorithm.HS512, secret).compact();
-	}
-
 	public Boolean validateToken(String token, UserDetails userDetails) {
 		User user = (User) userDetails;
 		final String email = getUsernameFromToken(token);
-		final Date created = getIssuedAtDateFromToken(token);
 		
-		ZonedDateTime zdt = null;
-		if(user.getLastLogin()!=null) {
-			zdt = user.getLastLogin().atZone(ZoneId.systemDefault());
-		}else {
-			zdt = user.getCreated().atZone(ZoneId.systemDefault());
-		}
-		
-		return (email.equals(user.getEmail()) && token.equals(user.getToken()));
-		//TODO
-//		return (email.equals(user.getEmail()) && !isTokenExpired(token)
-//				&& !isCreatedBeforeLastPasswordReset(created, Date.from(zdt.toInstant())));
+		return (email.equals(user.getEmail()) && token.equals(user.getToken())) && !isTokenExpired(token);
 	}
 
+	/**
+	 * 
+	 * @param createdDate
+	 * @return
+	 */
 	private Date calculateExpirationDate(Date createdDate) {
-		return new Date(createdDate.getTime() + expiration * 1000);
+		//tempo de expiração calculada em minutos
+		return new Date(createdDate.getTime() + expiration * 60 * 1000);
 	}
 }

@@ -10,10 +10,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import br.com.portal.errors.exceptions.AuthenticationException;
 import br.com.portal.errors.exceptions.EmailAlreadyExistsException;
 import br.com.portal.model.User;
 import br.com.portal.repository.UserRepository;
 import br.com.portal.token.JwtTokenUtil;
+import br.com.portal.util.MessageUtil.MessageConstants;
 
 /**
  * Service para validar o usuário
@@ -30,16 +32,16 @@ public class JwtUserDetailsService implements UserDetailsService {
 	private JwtTokenUtil jwtTokenUtil;
 	
 	@Override
-	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+	public UserDetails loadUserByUsername(final String email) throws UsernameNotFoundException {
 		Optional<User> optionalUser = userRepository.findByEmail(email);
 		if(!optionalUser.isPresent()) {
-			throw new UsernameNotFoundException("user.invalid");
+			throw new UsernameNotFoundException(MessageConstants.USER_INVALID);
 		}else {
 			return optionalUser.get();
 		}
 	}
 	
-	public User save(User user) throws EmailAlreadyExistsException {
+	public User save(final User user) throws EmailAlreadyExistsException {
 		if(isUserEmailAlreadyExists(user.getEmail())) {
 			throw new EmailAlreadyExistsException();
 		}
@@ -54,7 +56,7 @@ public class JwtUserDetailsService implements UserDetailsService {
 		return userSaved;
 	}
 	
-	public User updateToken(String email) {
+	public User updateToken(final String email) {
 		User user = (User) loadUserByUsername(email);
 		
 		String token = jwtTokenUtil.generateToken(user);
@@ -65,11 +67,17 @@ public class JwtUserDetailsService implements UserDetailsService {
 		return userSaved;
 	}
 
-	public User getById(String id) throws UsernameNotFoundException {
+	public User getById(final String id, final String token) throws UsernameNotFoundException, AuthenticationException {
 		Optional<User> user = userRepository.findById(Long.parseLong(id));
-		if(!user.isPresent())
-			throw new UsernameNotFoundException("user.not_found");
-		return user.get();
+		if(!user.isPresent()) {
+			throw new UsernameNotFoundException(MessageConstants.USER_NOT_FOUND);
+		}else {
+			String requestToken = token.substring(7);
+			if(!requestToken.equals(user.get().getToken())) {
+				throw new AuthenticationException(MessageConstants.USER_NOT_AUTHORIZED);
+			}
+			return user.get();
+		}
 	}
 	
 	private boolean isUserEmailAlreadyExists(final String email) {

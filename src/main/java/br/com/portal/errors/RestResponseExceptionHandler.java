@@ -14,6 +14,8 @@ import br.com.portal.errors.exceptions.AuthenticationException;
 import br.com.portal.errors.exceptions.EmailAlreadyExistsException;
 import br.com.portal.model.ErrorMessage;
 import br.com.portal.util.MessageUtil;
+import br.com.portal.util.MessageUtil.MessageConstants;
+import io.jsonwebtoken.ExpiredJwtException;
 
 /**
  * Handle para exceptions para endpoints REST
@@ -46,6 +48,12 @@ public class RestResponseExceptionHandler extends ResponseEntityExceptionHandler
 	@ExceptionHandler({EmailAlreadyExistsException.class})
 	public ResponseEntity<Object> handleEmailAlreadyExistsException(Exception e){
 		return ResponseEntity.status(HttpStatus.CONFLICT)
-				.body(new ErrorMessage(messageUtil.getMessage("user.mail.already_exist")));
+				.body(new ErrorMessage(messageUtil.getMessage(MessageConstants.EMAIL_ALREADY_EXISTS)));
+	}
+	
+	@ExceptionHandler({ExpiredJwtException.class})
+	public ResponseEntity<Object> handleExpiredJwtException(Exception e){
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+				.body(new ErrorMessage(messageUtil.getMessage(MessageConstants.SESSION_INVALID)));
 	}
 }

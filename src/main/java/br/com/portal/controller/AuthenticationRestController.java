@@ -4,7 +4,6 @@ import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,6 +20,8 @@ import br.com.portal.errors.exceptions.AuthenticationException;
 import br.com.portal.model.User;
 import br.com.portal.service.JwtUserDetailsService;
 import br.com.portal.token.JwtAuthenticationRequest;
+import br.com.portal.util.ApplicationProperties;
+import br.com.portal.util.MessageUtil.MessageConstants;
 
 /**
  * Endpoint para autenticação
@@ -31,9 +32,6 @@ import br.com.portal.token.JwtAuthenticationRequest;
 		RequestMethod.GET, RequestMethod.POST })
 public class AuthenticationRestController {
 
-	@Value("${jwt.header}")
-	private String tokenHeader;
-
 	@Autowired
 	private AuthenticationManager authenticationManager;
 
@@ -41,7 +39,7 @@ public class AuthenticationRestController {
 	@Qualifier("jwtUserDetailsService")
 	private JwtUserDetailsService userDetailsService;
 	
-	@PostMapping(value = "${jwt.route.authentication.path}")
+	@PostMapping(value = ApplicationProperties.JWT_AUTHENTICATION_PATH)
 	public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtAuthenticationRequest authenticationRequest)
 			throws Exception {
 		authenticate(authenticationRequest.getEmail(), authenticationRequest.getPassword());
@@ -59,9 +57,9 @@ public class AuthenticationRestController {
 			Objects.requireNonNull(password);
 			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 		} catch (DisabledException e) {
-			throw new AuthenticationException("user.invalid", e);
+			throw new AuthenticationException(MessageConstants.USER_INVALID, e);
 		} catch (BadCredentialsException e) {
-			throw new AuthenticationException("user.invalid", e);
+			throw new AuthenticationException(MessageConstants.USER_INVALID, e);
 		}
 	}
 }

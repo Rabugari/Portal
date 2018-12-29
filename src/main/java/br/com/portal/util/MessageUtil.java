@@ -23,4 +23,17 @@ public class MessageUtil {
 	public String getMessage(final String messageProperty) {
 		return messageSource.getMessage(messageProperty, null, new Locale(locale));
 	}
+	
+	/**
+	 * Constantes para centralizar chamadas ao @{link messages.properties}
+	 * @author douglas.takara
+	 */
+	public static interface MessageConstants {
+		final String SESSION_INVALID = "session.invalid";
+		final String USER_INVALID = "user.invalid";
+		final String USER_ERROR = "user.error";
+		final String USER_NOT_AUTHORIZED = "user.not_authorized";
+		final String USER_NOT_FOUND ="user.not_found";
+		final String EMAIL_ALREADY_EXISTS = "user.mail.already_exist";
+	}
 }
