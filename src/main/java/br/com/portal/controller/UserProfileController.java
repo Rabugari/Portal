@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.portal.errors.exceptions.EmailAlreadyExistsException;
@@ -58,10 +57,11 @@ public class UserProfileController {
 	 * @throws UsernameNotFoundException
 	 * @throws AuthenticationException
 	 */
-	@ApiOperation(value="Endpoint para buscar um perfil de um usuário", response=User.class)
-	@GetMapping(value = "/{id}")
+	@ApiOperation(value="Endpoint para buscar um perfil de um usuário", response=User.class, consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/{id}",  consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<User> getAuthenticatedUser(@PathVariable("id") String id,
-			@RequestHeader(value = "Authorization") String token) throws UsernameNotFoundException, AuthenticationException {
+			@RequestHeader(value = "Authorization") String token,
+			@RequestHeader(value = "Content-Type") String contentType) throws UsernameNotFoundException, AuthenticationException {
 		User user = (User) userDetailsService.getById(id, token);
 		return ResponseEntity.ok(user);
 	}
