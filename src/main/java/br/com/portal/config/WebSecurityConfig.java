@@ -46,6 +46,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Value(ApplicationProperties.JWT_AUTHENTICATION_PATH)
 	private String authenticationPath;
 	
+	private static final String[] SWAGGER_PATHS = { "/users/save/**", "/v2/api-docs/**", "/swagger-ui.html/**",
+			    "/webjars/**", "/swagger-resources/**" };
+	
 	/**
 	 * Configurando service para usuário e tipo de encode
 	 * @param auth
@@ -78,6 +81,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 			.authorizeRequests()
 			.antMatchers(HttpMethod.POST, "/user").permitAll()
+			.antMatchers(SWAGGER_PATHS).permitAll()
 			.anyRequest().authenticated();
 		
 		http.addFilterBefore(authenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
@@ -93,6 +97,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	public void configure(WebSecurity web) throws Exception {
 		web.ignoring()
 			.antMatchers(HttpMethod.POST, authenticationPath)
-			.antMatchers(HttpMethod.POST, "/user");
+			.antMatchers(HttpMethod.POST, "/user")
+			.antMatchers(SWAGGER_PATHS);
 	}
 }

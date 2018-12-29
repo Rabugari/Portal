@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.portal.errors.exceptions.EmailAlreadyExistsException;
 import br.com.portal.model.User;
 import br.com.portal.service.JwtUserDetailsService;
+import io.swagger.annotations.ApiOperation;
 
 /**
  * Endpoint para perfil do usuário
@@ -29,8 +30,7 @@ import br.com.portal.service.JwtUserDetailsService;
 @RestController
 @RequestMapping(path = "/user", 
 	consumes = MediaType.APPLICATION_JSON_VALUE,
-	produces = MediaType.APPLICATION_JSON_VALUE, 
-	method = { RequestMethod.GET, RequestMethod.POST })
+	produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserProfileController {
 
 	@Autowired
@@ -43,6 +43,7 @@ public class UserProfileController {
 	 * @return
 	 * @throws EmailAlreadyExistsException
 	 */
+	@ApiOperation(value="Endpoint para registar um novo do usuário", response=User.class)
 	@PostMapping
 	public ResponseEntity<User> save(@Valid @RequestBody User user) throws EmailAlreadyExistsException {
 		User newUser = userDetailsService.save(user);
@@ -57,6 +58,7 @@ public class UserProfileController {
 	 * @throws UsernameNotFoundException
 	 * @throws AuthenticationException
 	 */
+	@ApiOperation(value="Endpoint para buscar um perfil de um usuário", response=User.class)
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<User> getAuthenticatedUser(@PathVariable("id") String id,
 			@RequestHeader(value = "Authorization") String token) throws UsernameNotFoundException, AuthenticationException {

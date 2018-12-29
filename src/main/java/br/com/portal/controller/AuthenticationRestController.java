@@ -9,7 +9,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,14 +20,14 @@ import br.com.portal.service.JwtUserDetailsService;
 import br.com.portal.token.JwtAuthenticationRequest;
 import br.com.portal.util.ApplicationProperties;
 import br.com.portal.util.MessageUtil.MessageConstants;
+import io.swagger.annotations.ApiOperation;
 
 /**
  * Endpoint para autenticação do usuário
  * @author douglas.takara
  */
 @RestController
-@RequestMapping(path = "/", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = {
-		RequestMethod.GET, RequestMethod.POST })
+@RequestMapping(path = "/", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 public class AuthenticationRestController {
 
 	@Autowired
@@ -38,7 +37,8 @@ public class AuthenticationRestController {
 	@Qualifier("jwtUserDetailsService")
 	private JwtUserDetailsService userDetailsService;
 	
-	@PostMapping(value = ApplicationProperties.JWT_AUTHENTICATION_PATH)
+	@ApiOperation(value="Endpoint para autenticacação do usuário", response=User.class)
+	@RequestMapping(method=RequestMethod.POST, value = ApplicationProperties.JWT_AUTHENTICATION_PATH)
 	public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtAuthenticationRequest authenticationRequest)
 			throws Exception {
 		authenticate(authenticationRequest.getEmail(), authenticationRequest.getPassword());

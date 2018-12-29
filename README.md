@@ -16,7 +16,7 @@ Um simples portal de serviços para autenticação e cadastro de usuário, via t
 ### Paramêtros de configuração
 Para configuração do projeto, deve alterar o arquivo 'application.properties'. Nele, pode-se personalizar:
 ```sh
-#locale - idioma do aplicação
+#locale - idioma da aplicação
 #spring.datasource.username - usuário do banco de dados
 #spring.datasource.password - senha do banco de dados
 #jwt.secret - secret para geração dos tokens
