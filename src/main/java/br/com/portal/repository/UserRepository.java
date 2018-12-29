@@ -13,7 +13,7 @@ import br.com.portal.model.User;
  * @author douglas.takara
  */
 @Repository
-public interface UserRepository extends JpaRepository<User, String>{
+public interface UserRepository extends JpaRepository<User, Long>{
 	Optional<User> findByEmail(String email);
 	
 	Optional<User> findByToken(String token);

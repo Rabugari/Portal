@@ -1,7 +1,6 @@
 package br.com.portal.service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,13 +62,16 @@ public class JwtUserDetailsService implements UserDetailsService {
 		User userSaved = userRepository.save(user);
 		return userSaved;
 	}
+
+	public User getById(String id) throws UsernameNotFoundException {
+		Optional<User> user = userRepository.findById(Long.parseLong(id));
+		if(!user.isPresent())
+			throw new UsernameNotFoundException("user.not_found");
+		return user.get();
+	}
 	
 	private boolean isUserEmailAlreadyExists(final String email) {
 		UserDetails optionalUser = loadUserByUsername(email);
 		return optionalUser!=null;
-	}
-
-	public List<User> listAll() {
-		return userRepository.findAll();
 	}
 }

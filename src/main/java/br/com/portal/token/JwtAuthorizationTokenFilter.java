@@ -26,6 +26,8 @@ import io.jsonwebtoken.io.IOException;
 @Component
 public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
 
+	private static final String BEARER = "Bearer ";
+
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	private final JwtUserDetailsService userDetailsService;
@@ -48,7 +50,7 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
 
 		String username = null;
 		String authToken = null;
-		if (requestHeader != null && requestHeader.startsWith("Bearer ")) {
+		if (requestHeader != null && requestHeader.startsWith(BEARER)) {
 			authToken = requestHeader.substring(7);
 			try {
 				username = jwtTokenUtil.getUsernameFromToken(authToken);

@@ -68,9 +68,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 			.authorizeRequests()
-			.antMatchers("/login/**").permitAll()
-			.antMatchers(HttpMethod.POST, "/perfil/**").permitAll()
-			.antMatchers(HttpMethod.GET, "/perfil/**").permitAll()
+//			.antMatchers("/login/**").permitAll()
+			.antMatchers(HttpMethod.POST, "/user").permitAll()
 			.anyRequest().authenticated();
 		
 		http.addFilterBefore(authenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
@@ -83,7 +82,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	public void configure(WebSecurity web) throws Exception {
 		web.ignoring()
 			.antMatchers(HttpMethod.POST, authenticationPath)
-			.antMatchers(HttpMethod.POST, "/perfil/**")
-			.antMatchers(HttpMethod.GET, "/perfil/**");
+			.antMatchers(HttpMethod.POST, "/user");
 	}
 }
