@@ -1,7 +1,5 @@
 package br.com.portal.controller;
 
-import java.util.Objects;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
@@ -10,6 +8,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -51,10 +50,11 @@ public class AuthenticationRestController {
 	/**
 	 * Valida a autenticação do usuário
 	 */
-	private void authenticate(String username, String password) {
+	private void authenticate(final String username, final String password) {
 		try {
-			Objects.requireNonNull(username);
-			Objects.requireNonNull(password);
+			if(StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
+				throw new AuthenticationException(MessageConstants.USER_INVALID);
+			}
 			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 		} catch (DisabledException e) {
 			throw new AuthenticationException(MessageConstants.USER_INVALID, e);

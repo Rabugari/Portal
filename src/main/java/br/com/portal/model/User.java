@@ -15,13 +15,17 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import br.com.portal.util.MessageUtil.MessageConstants;
 
 /**
  * Dominio para o usuário da aplicação
@@ -38,16 +42,20 @@ public class User implements Serializable, UserDetails {
 	@SequenceGenerator(name = "user_seq", sequenceName = "user_seq", allocationSize = 1)
 	private Long id;
 
+	@NotNull(message=MessageConstants.INSERT_AN_USERNAME)
 	@Column(name = "NAME", length = 50)
 	private String name;
 
+	@NotNull(message=MessageConstants.INSERT_AN_EMAIL)
 	@Column(name = "EMAIL", length = 120)
 	private String email;
-
+	
+	@NotNull(message=MessageConstants.INSERT_A_PASSWORD)
 	@Column(name = "PASSWORD", length = 120)
 	private String password;
 
 	@OneToMany(cascade = CascadeType.ALL)
+	@Nullable
 	private List<Phone> phones;
 
 	@Column(name = "CREATED")

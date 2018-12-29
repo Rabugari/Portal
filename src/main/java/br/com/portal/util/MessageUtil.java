@@ -35,5 +35,11 @@ public class MessageUtil {
 		final String USER_NOT_AUTHORIZED = "user.not_authorized";
 		final String USER_NOT_FOUND ="user.not_found";
 		final String EMAIL_ALREADY_EXISTS = "user.mail.already_exist";
+		final String USER_INSERT_ERROR = "user.inserter.error";
+		final String INSERT_AN_USERNAME = "user.insert.username";
+		final String INSERT_AN_EMAIL = "user.insert.email";
+		final String INSERT_A_PASSWORD = "user.insert.password";
+		final String INSERT_A_VALID_EMAIL = "insert.valid.email";
+		
 	}
 }

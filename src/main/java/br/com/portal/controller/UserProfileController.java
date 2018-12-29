@@ -1,8 +1,11 @@
 package br.com.portal.controller;
 
+import javax.validation.Valid;
+
 import org.apache.tomcat.websocket.AuthenticationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -35,9 +38,9 @@ public class UserProfileController {
 	private JwtUserDetailsService userDetailsService;
 	
 	@PostMapping
-	public ResponseEntity<User> save(@RequestBody User user) throws EmailAlreadyExistsException {
+	public ResponseEntity<User> save(@Valid @RequestBody User user) throws EmailAlreadyExistsException {
 		User newUser = userDetailsService.save(user);
-		return ResponseEntity.ok(newUser);
+		return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
 	}
 
 	@GetMapping(value = "/{id}")
