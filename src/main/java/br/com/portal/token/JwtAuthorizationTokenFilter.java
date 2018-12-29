@@ -92,6 +92,8 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
 				 logger.info("Usuário autenticado, inserindo no security context", username);
 				 
 				SecurityContextHolder.getContext().setAuthentication(authentication);
+			}else {
+				writeResponseMessage(messageUtil.getMessage(MessageConstants.SESSION_INVALID), response);
 			}
 		}
 		chain.doFilter(request, response);

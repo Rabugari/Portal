@@ -46,7 +46,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Value(ApplicationProperties.JWT_AUTHENTICATION_PATH)
 	private String authenticationPath;
 	
-	private static final String[] SWAGGER_PATHS = { "/users/save/**", "/v2/api-docs/**", "/swagger-ui.html/**",
+	private static final String[] SWAGGER_PATHS = { "/v2/api-docs/**", "/swagger-ui.html/**",
 			    "/webjars/**", "/swagger-resources/**" };
 	
 	/**
@@ -80,7 +80,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 			.authorizeRequests()
-			.antMatchers(HttpMethod.POST, "/user").permitAll()
+			.antMatchers(HttpMethod.POST, "/user/**").permitAll()
 			.antMatchers(SWAGGER_PATHS).permitAll()
 			.anyRequest().authenticated();
 		
@@ -97,7 +97,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	public void configure(WebSecurity web) throws Exception {
 		web.ignoring()
 			.antMatchers(HttpMethod.POST, authenticationPath)
-			.antMatchers(HttpMethod.POST, "/user")
+			.antMatchers(HttpMethod.POST, "/user/**")
 			.antMatchers(SWAGGER_PATHS);
 	}
 }

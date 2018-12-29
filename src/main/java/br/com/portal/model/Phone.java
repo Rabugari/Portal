@@ -10,12 +10,16 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * Domínio para telefone do usuário
  * @author douglas.takara
  */
 @Entity
 @Table(name="PHONE")
+@ApiModel(value = "Telefone")
 public class Phone implements Serializable {
 
 	private static final long serialVersionUID = -6753234351933827560L;
@@ -23,12 +27,15 @@ public class Phone implements Serializable {
 	@Id
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="phone_seq")
 	@SequenceGenerator(name="phone_seq", sequenceName="phone_seq", allocationSize=1	)
+	@ApiModelProperty(allowEmptyValue=true, required=false)
 	private Long id;
 	
 	@Column(name="DDD", length=2)
+	@ApiModelProperty(dataType="String", example="\"11\"")
 	private Integer ddd;
 	
 	@Column(name="NUMBER", length=20)
+	@ApiModelProperty(dataType="String", example="\"1112345678\"")
 	private Long number;
 	
 	public Integer getDdd() {

@@ -26,6 +26,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import br.com.portal.util.MessageUtil.MessageConstants;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * Dominio para o usuário da aplicação
@@ -33,6 +35,7 @@ import br.com.portal.util.MessageUtil.MessageConstants;
  */
 @Entity
 @Table(name = "USER")
+@ApiModel(value = "Usuario")
 public class User implements Serializable, UserDetails {
 
 	private static final long serialVersionUID = -9221635979870150799L;
@@ -40,6 +43,7 @@ public class User implements Serializable, UserDetails {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
 	@SequenceGenerator(name = "user_seq", sequenceName = "user_seq", allocationSize = 1)
+	@ApiModelProperty(allowEmptyValue=true, required=false)
 	private Long id;
 
 	@NotNull(message=MessageConstants.INSERT_AN_USERNAME)
@@ -56,22 +60,27 @@ public class User implements Serializable, UserDetails {
 
 	@OneToMany(cascade = CascadeType.ALL)
 	@Nullable
+	@ApiModelProperty(allowEmptyValue=true, required=false)
 	private List<Phone> phones;
 
 	@Column(name = "CREATED")
 	@JsonFormat(pattern = "dd/MM/yyyy HH:mm")
+	@ApiModelProperty(allowEmptyValue=true, required=false)
 	private LocalDateTime created;
 
 	@Column(name = "MODIFIED")
 	@JsonFormat(pattern = "dd/MM/yyyy HH:mm")
+	@ApiModelProperty(allowEmptyValue=true, required=false)
 	private LocalDateTime modified;
 
 	@Column(name = "LASTLOGIN")
 	@JsonFormat(pattern = "dd/MM/yyyy HH:mm")
 	@JsonProperty(value="last_login")
+	@ApiModelProperty(allowEmptyValue=true, required=false)
 	private LocalDateTime lastLogin;
 
 	@Column(name = "TOKEN")
+	@ApiModelProperty(allowEmptyValue=true, required=false)
 	private String token;
 
 	@Transient
