@@ -37,18 +37,39 @@ public class JwtTokenUtil implements Serializable {
 	@Value(ApplicationProperties.JWT_EXPIRATION)
 	private Long expiration;
 
-	public String getUsernameFromToken(String token) {
+	/**
+	 * Recupera um e-mail por token
+	 * @param token
+	 * @return
+	 */
+	public String getEmailFromToken(String token) {
 		return getClaimFromToken(token, Claims::getSubject);
 	}
 
+	/**
+	 * Recupera data de criação do token
+	 * @param token
+	 * @return
+	 */
 	public Date getIssuedAtDateFromToken(String token) {
 		return getClaimFromToken(token, Claims::getIssuedAt);
 	}
 
+	/**
+	 * Calcula e recupera data de expiração do token 
+	 * @param token
+	 * @return
+	 */
 	public Date getExpirationDateFromToken(String token) {
 		return getClaimFromToken(token, Claims::getExpiration);
 	}
 
+	/**
+	 * Recupera as properties do token
+	 * @param token
+	 * @param claimsResolver
+	 * @return
+	 */
 	public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
 		final Claims claims = getAllClaimsFromToken(token);
 		return claimsResolver.apply(claims);
@@ -58,16 +79,32 @@ public class JwtTokenUtil implements Serializable {
 		return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
 	}
 
+	/**
+	 * Verifica se o token está expirado
+	 * @param token
+	 * @return
+	 */
 	private Boolean isTokenExpired(String token) {
 		final Date expiration = getExpirationDateFromToken(token);
 		return expiration.before(clock.now());
 	}
 
+	/**
+	 * Gera um novo token de acordo com os dados do usuário
+	 * @param userDetails - utiliza o email do usuário
+	 * @return
+	 */
 	public String generateToken(User userDetails) {
 		Map<String, Object> claims = new HashMap<>();
 		return doGenerateToken(claims, userDetails.getEmail());
 	}
 
+	/**
+	 * Passo para geração de um novo token
+	 * @param claims
+	 * @param subject
+	 * @return
+	 */
 	private String doGenerateToken(Map<String, Object> claims, String subject) {
 		final Date createdDate = clock.now();
 		final Date expirationDate = calculateExpirationDate(createdDate);
@@ -76,15 +113,21 @@ public class JwtTokenUtil implements Serializable {
 				.setExpiration(expirationDate).signWith(SignatureAlgorithm.HS512, secret).compact();
 	}
 
+	/**
+	 * Valida se o token está valido
+	 * @param token
+	 * @param userDetails
+	 * @return
+	 */
 	public Boolean validateToken(String token, UserDetails userDetails) {
 		User user = (User) userDetails;
-		final String email = getUsernameFromToken(token);
+		final String email = getEmailFromToken(token);
 		
 		return (email.equals(user.getEmail()) && token.equals(user.getToken())) && !isTokenExpired(token);
 	}
 
 	/**
-	 * 
+	 * Calcula data de expiração do token
 	 * @param createdDate
 	 * @return
 	 */

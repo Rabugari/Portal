@@ -23,7 +23,7 @@ import br.com.portal.util.MessageUtil.MessageConstants;
 import io.jsonwebtoken.ExpiredJwtException;
 
 /**
- * Handle para exceptions para endpoints REST
+ * Handle para exceptions dos endpoints REST
  * 
  * @author douglas.takara
  */

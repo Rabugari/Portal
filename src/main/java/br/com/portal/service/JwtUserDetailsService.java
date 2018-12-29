@@ -31,6 +31,10 @@ public class JwtUserDetailsService implements UserDetailsService {
 	@Autowired
 	private JwtTokenUtil jwtTokenUtil;
 	
+	/**
+	 * Retorna um usuário pelo e-mail
+	 * @param email - do usuário 
+	*/
 	@Override
 	public UserDetails loadUserByUsername(final String email) throws UsernameNotFoundException {
 		Optional<User> optionalUser = userRepository.findByEmail(email);
@@ -41,6 +45,12 @@ public class JwtUserDetailsService implements UserDetailsService {
 		}
 	}
 	
+	/**
+	 * Salva usuário enviado
+	 * @param user
+	 * @return
+	 * @throws EmailAlreadyExistsException
+	 */
 	public User save(final User user) throws EmailAlreadyExistsException {
 		if(isUserEmailAlreadyExists(user.getEmail())) {
 			throw new EmailAlreadyExistsException();
@@ -56,6 +66,11 @@ public class JwtUserDetailsService implements UserDetailsService {
 		return userSaved;
 	}
 	
+	/**
+	 * Atualiza o token do usuário
+	 * @param email - chave para buscar o usuário e gerar um novo token
+	 * @return
+	 */
 	public User updateToken(final String email) {
 		User user = (User) loadUserByUsername(email);
 		
@@ -67,6 +82,14 @@ public class JwtUserDetailsService implements UserDetailsService {
 		return userSaved;
 	}
 
+	/**
+	 * Recupera o usuario via id
+	 * @param id - do usuário
+	 * @param token - chave para validar o usuário
+	 * @return
+	 * @throws UsernameNotFoundException
+	 * @throws AuthenticationException
+	 */
 	public User getById(final String id, final String token) throws UsernameNotFoundException, AuthenticationException {
 		Optional<User> user = userRepository.findById(Long.parseLong(id));
 		if(!user.isPresent()) {
@@ -80,6 +103,11 @@ public class JwtUserDetailsService implements UserDetailsService {
 		}
 	}
 	
+	/**
+	 * Verifica se o e-mail já existe na base de dados
+	 * @param email
+	 * @return
+	 */
 	private boolean isUserEmailAlreadyExists(final String email) {
 		Optional<User> optionalUser = userRepository.findByEmail(email);
 		return optionalUser.isPresent();

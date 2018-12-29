@@ -37,12 +37,26 @@ public class UserProfileController {
 	@Qualifier("jwtUserDetailsService")
 	private JwtUserDetailsService userDetailsService;
 	
+	/**
+	 * Salva o usuário enviado
+	 * @param user
+	 * @return
+	 * @throws EmailAlreadyExistsException
+	 */
 	@PostMapping
 	public ResponseEntity<User> save(@Valid @RequestBody User user) throws EmailAlreadyExistsException {
 		User newUser = userDetailsService.save(user);
 		return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
 	}
 
+	/**
+	 * Retorna o perfil do usuário de acordo com o id
+	 * @param id - id do usuário
+	 * @param token - access token bearer jwt
+	 * @return
+	 * @throws UsernameNotFoundException
+	 * @throws AuthenticationException
+	 */
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<User> getAuthenticatedUser(@PathVariable("id") String id,
 			@RequestHeader(value = "Authorization") String token) throws UsernameNotFoundException, AuthenticationException {

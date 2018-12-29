@@ -23,7 +23,7 @@ import br.com.portal.util.ApplicationProperties;
 import br.com.portal.util.MessageUtil.MessageConstants;
 
 /**
- * Endpoint para autenticação
+ * Endpoint para autenticação do usuário
  * @author douglas.takara
  */
 @RestController
@@ -48,7 +48,7 @@ public class AuthenticationRestController {
 	}
 
 	/**
-	 * Valida a autenticação do usuário
+	 * Valida as credenciais do usuário
 	 */
 	private void authenticate(final String username, final String password) {
 		try {

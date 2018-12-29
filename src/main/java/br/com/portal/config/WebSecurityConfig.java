@@ -46,6 +46,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Value(ApplicationProperties.JWT_AUTHENTICATION_PATH)
 	private String authenticationPath;
 	
+	/**
+	 * Configurando service para usuário e tipo de encode
+	 * @param auth
+	 * @throws Exception
+	 */
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(jwtUserDetailsService)
@@ -62,7 +67,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	public AuthenticationManager authenticationManagerBean() throws Exception {
 		return super.authenticationManagerBean();
 	}
-	
+
+	/**
+	 * Configurando segurança de acesso dos usuário 
+	 */
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.csrf().disable()
@@ -78,6 +86,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		http.headers().frameOptions().sameOrigin().cacheControl();
 	}
 	
+	/**
+	 * Configurando segurança de acesso dos usuário 
+	 */
 	@Override
 	public void configure(WebSecurity web) throws Exception {
 		web.ignoring()

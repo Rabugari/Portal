@@ -66,7 +66,7 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
 		if (requestHeader != null && requestHeader.startsWith(BEARER)) {
 			authToken = requestHeader.substring(7);
 			try {
-				username = jwtTokenUtil.getUsernameFromToken(authToken);
+				username = jwtTokenUtil.getEmailFromToken(authToken);
 			} catch (IllegalArgumentException e) {
 				logger.error("Erro ao validar o usuário", e);
 				writeResponseMessage(messageUtil.getMessage(MessageConstants.USER_ERROR), response);
@@ -98,6 +98,12 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
 	}
 	
 	
+	/**
+	 * Preenche uma mensagem com erro para o Response
+	 * @param messageError - propertyName da mensagem de erro
+	 * @param response
+	 * @throws java.io.IOException
+	 */
 	private void writeResponseMessage(String messageError, HttpServletResponse response) throws java.io.IOException {
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 		PrintWriter writer = response.getWriter();

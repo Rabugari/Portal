@@ -60,7 +60,7 @@ public class JwtTokenUtilTest {
 
 		final String token = createToken();
 
-		assertThat(jwtTokenUtil.getUsernameFromToken(token)).isEqualTo(TEST_EMAIL);
+		assertThat(jwtTokenUtil.getEmailFromToken(token)).isEqualTo(TEST_EMAIL);
 	}
 
 	@Test
