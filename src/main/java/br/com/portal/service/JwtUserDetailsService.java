@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import br.com.portal.errors.exceptions.EmailAlreadyExistsException;
 import br.com.portal.model.User;
 import br.com.portal.repository.UserRepository;
 import br.com.portal.token.JwtTokenUtil;
@@ -29,7 +30,21 @@ public class JwtUserDetailsService implements UserDetailsService {
 	@Autowired
 	private JwtTokenUtil jwtTokenUtil;
 	
-	public User save(User user) {
+	@Override
+	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+		Optional<User> optionalUser = userRepository.findByEmail(email);
+		if(!optionalUser.isPresent()) {
+			throw new UsernameNotFoundException(String.format("not found username '%s'.", optionalUser));
+		}else {
+			return optionalUser.get();
+		}
+	}
+	
+	public User save(User user) throws EmailAlreadyExistsException {
+		if(isUserEmailAlreadyExists(user.getEmail())) {
+			throw new EmailAlreadyExistsException();
+		}
+		
 		String token = jwtTokenUtil.generateToken(user);
 		user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
 		user.setToken(token);
@@ -48,15 +63,10 @@ public class JwtUserDetailsService implements UserDetailsService {
 		User userSaved = userRepository.save(user);
 		return userSaved;
 	}
-
-	@Override
-	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-		Optional<User> optionalUser = userRepository.findByEmail(email);
-		if(!optionalUser.isPresent()) {
-			throw new UsernameNotFoundException(String.format("not found username '%s'.", optionalUser));
-		}else {
-			return optionalUser.get();
-		}
+	
+	private boolean isUserEmailAlreadyExists(final String email) {
+		UserDetails optionalUser = loadUserByUsername(email);
+		return optionalUser!=null;
 	}
 
 	public List<User> listAll() {

@@ -6,17 +6,17 @@ import java.io.Serializable;
  * Dominio para mensagens da aplicação
  * @author douglas.takara
  */
-public class Message implements Serializable {
+public class ErrorMessage implements Serializable {
 
 	private static final long serialVersionUID = 5268758455307540483L;
 
-	private String value;
+	private String message;
 	
-	public Message(String value) {
-		this.value = value;
+	public ErrorMessage(String message) {
+		this.message = message;
 	}
 	
-	public String getValue() {
-		return value;
+	public String getMessage() {
+		return message;
 	}
 }

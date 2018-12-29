@@ -1,4 +1,4 @@
-package br.com.portal.exception;
+package br.com.portal.errors.exceptions;
 
 /**
  * Exception para a autenticação
