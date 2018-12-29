@@ -11,7 +11,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.portal.errors.exceptions.AuthenticationException;
 import br.com.portal.model.User;
+import br.com.portal.service.JwtUserDetailsService;
 import br.com.portal.token.JwtAuthenticationRequest;
 
 /**
@@ -39,12 +39,13 @@ public class AuthenticationRestController {
 
 	@Autowired
 	@Qualifier("jwtUserDetailsService")
-	private UserDetailsService userDetailsService;
+	private JwtUserDetailsService userDetailsService;
 	
 	@PostMapping(value = "${jwt.route.authentication.path}")
 	public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtAuthenticationRequest authenticationRequest)
 			throws Exception {
 		authenticate(authenticationRequest.getEmail(), authenticationRequest.getPassword());
+		userDetailsService.updateToken(authenticationRequest.getEmail());
 		final User userDetails = (User) userDetailsService.loadUserByUsername(authenticationRequest.getEmail());
 		return ResponseEntity.ok(userDetails);
 	}

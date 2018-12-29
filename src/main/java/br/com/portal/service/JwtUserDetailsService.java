@@ -54,8 +54,10 @@ public class JwtUserDetailsService implements UserDetailsService {
 		return userSaved;
 	}
 	
-	public User updateToken(String email, String token) {
+	public User updateToken(String email) {
 		User user = (User) loadUserByUsername(email);
+		
+		String token = jwtTokenUtil.generateToken(user);
 		user.setToken(token);
 		user.setModified(LocalDateTime.now());
 		user.setLastLogin(LocalDateTime.now());
@@ -71,7 +73,7 @@ public class JwtUserDetailsService implements UserDetailsService {
 	}
 	
 	private boolean isUserEmailAlreadyExists(final String email) {
-		UserDetails optionalUser = loadUserByUsername(email);
-		return optionalUser!=null;
+		Optional<User> optionalUser = userRepository.findByEmail(email);
+		return optionalUser.isPresent();
 	}
 }

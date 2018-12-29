@@ -114,7 +114,7 @@ public class JwtTokenUtil implements Serializable {
 			zdt = user.getCreated().atZone(ZoneId.systemDefault());
 		}
 		
-		return (email.equals(user.getEmail()));
+		return (email.equals(user.getEmail()) && token.equals(user.getToken()));
 		//TODO
 //		return (email.equals(user.getEmail()) && !isTokenExpired(token)
 //				&& !isCreatedBeforeLastPasswordReset(created, Date.from(zdt.toInstant())));

@@ -39,8 +39,8 @@ public class UserProfileController {
 	}
 
 	@GetMapping(value = "/{id}")
-	public User getAuthenticatedUser(@PathVariable("id") String id) throws UsernameNotFoundException {
+	public ResponseEntity<User> getAuthenticatedUser(@PathVariable("id") String id) throws UsernameNotFoundException {
 		User user = (User) userDetailsService.getById(id);
-		return user;
+		return ResponseEntity.ok(user);
 	}
 }

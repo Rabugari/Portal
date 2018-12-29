@@ -14,9 +14,11 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import br.com.portal.errors.exceptions.AuthenticationException;
 import br.com.portal.model.User;
 import br.com.portal.service.JwtUserDetailsService;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.io.IOException;
 
 /**
@@ -58,9 +60,13 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
 				logger.error("Erro ao validar o usuário", e);
 			} catch (ExpiredJwtException e) {
 				logger.warn("Token expirado.", e);
+			} catch(MalformedJwtException e) {
+				logger.warn("Token inválido", e);
+				throw new AuthenticationException("user.not_authorized", e);
+//				response.getSendError(HttpStatus.UNAUTHORIZED.value(), "{user.not_authorized}");
 			}
 		} else {
-			 logger.warn("Tipo de 'Authorization' inválida. Diferente de 'Bearer'.");
+			 logger.warn("Acesso endpoint de exceção ou Tipo de 'Authorization' inválida.");
 		}
 
 		 logger.debug("Verificando as credenciais do usuário '{}'", username);
@@ -74,7 +80,6 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
 				 logger.info("Usuário autenticado, inserindo no security context", username);
 				 
 				SecurityContextHolder.getContext().setAuthentication(authentication);
-				userDetailsService.updateToken(userDetails.getEmail(), userDetails.getToken());
 			}
 		}
 		chain.doFilter(request, response);
